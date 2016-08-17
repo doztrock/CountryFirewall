@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Lista IPSET
+REGLA=internacional
+
+# Creamos la lista de IPSET
+ipset -N $REGLA hash:net
+
+# Eliminamos las zonas descargadas anteriormente
+rm cn.zone
+
+# Descargamos la zona
+wget -P . http://www.ipdeny.com/ipblocks/data/countries/cn.zone
+
+# Agregamos la zona a la lista de IPSET
+for i in $(cat cn.zone ); do ipset -A $REGLA $i; done
+

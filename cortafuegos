@@ -14,6 +14,9 @@ iptables -P FORWARD ACCEPT
 # Bloqueos de Direcciones IP
 lastb | awk {'print $3'} | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" | sort | uniq | awk {'print "iptables -A INPUT -s " $1 " -j DROP"'} | bash
 
+# Bloqueos de Paises
+iptables -A INPUT -p TCP -m set --match-set internacional src -j DROP
+
 # Limites de conexiones
 iptables -A INPUT -p TCP --syn --dport 80 -m connlimit --connlimit-above 30 -j REJECT
 iptables -A INPUT -p TCP --syn --dport 443 -m connlimit --connlimit-above 30 -j REJECT
