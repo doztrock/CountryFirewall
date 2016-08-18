@@ -1,17 +1,26 @@
 #!/bin/bash
 
-# Lista IPSET
-REGLA=internacional
+# Excepciones
+EXCEPCION="co"
 
 # Creamos la lista de IPSET
-ipset -N $REGLA hash:net
+ipset -N internacional hash:net
+ipset flush internacional
 
 # Eliminamos las zonas descargadas anteriormente
-rm cn.zone
+echo "Eliminando zonas previas"
+rm -f /tmp/all-zones.tar.gz
+rm -f /tmp/all-zones.tar.gz.*
+rm -f /tmp/*.zone
 
 # Descargamos la zona
-wget -P . http://www.ipdeny.com/ipblocks/data/countries/cn.zone
+echo "Descargando nuevas zonas"
+wget -P /tmp/ http://www.ipdeny.com/ipblocks/data/countries/all-zones.tar.gz
 
-# Agregamos la zona a la lista de IPSET
-for i in $(cat cn.zone ); do ipset -A $REGLA $i; done
+# Descomprimimos
+tar xzf /tmp/all-zones.tar.gz -C /tmp/
 
+# Agregamos las zonas de los paises
+echo "Agregando nuevas zonas..."
+echo "Esto puede tardar unos minutos..."
+find /tmp/ -type f -name "*.zone" | grep -v $EXCEPCION | awk {'print "for i in $(cat " $1 "); do ipset -A internacional $i; done"'} | bash
