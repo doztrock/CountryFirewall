@@ -2,10 +2,11 @@
 
 # Excepciones
 EXCEPCION[0]='co'
-EXCEPCION[1]='us'
-EXCEPCION[2]='ca'
+EXCEPCION[1]='ca'
+#EXCEPCION[2]='us'
 
 # Creamos la lista de IPSET
+ipset -exist flush permitido
 ipset -N permitido hash:net -exist
 
 # Eliminamos las zonas descargadas anteriormente
