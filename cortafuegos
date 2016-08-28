@@ -12,6 +12,9 @@ iptables -P INPUT ACCEPT
 iptables -P OUTPUT ACCEPT
 iptables -P FORWARD ACCEPT
 
+# Permite conexiones establecidas
+iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+
 
 # Revision paquetes SYN
 iptables -A INPUT -p tcp ! --syn -m state --state NEW -j DROP
@@ -61,9 +64,3 @@ iptables -A INPUT -p UDP -m set --match-set permitido src -j ACCEPT
 iptables -A INPUT -p TCP -m set ! --match-set permitido src -j DROP
 iptables -A INPUT -p UDP -m set ! --match-set permitido src -j DROP
 
-
-# Limites de conexiones
-iptables -A INPUT -p TCP --syn --dport 22 -m connlimit --connlimit-above 2 -j REJECT
-iptables -A INPUT -p TCP --syn --dport 80 -m connlimit --connlimit-above 30 -j REJECT
-iptables -A INPUT -p TCP --syn --dport 443 -m connlimit --connlimit-above 30 -j REJECT
-iptables -A INPUT -p TCP --syn --dport 8080 -m connlimit --connlimit-above 30 -j REJECT
