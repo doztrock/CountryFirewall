@@ -64,3 +64,17 @@ iptables -A INPUT -p UDP -m set --match-set permitido src -j ACCEPT
 iptables -A INPUT -p TCP -m set ! --match-set permitido src -j DROP
 iptables -A INPUT -p UDP -m set ! --match-set permitido src -j DROP
 
+# Bloqueo de Servicios
+
+# MYSQL
+iptables -A INPUT -s 127.0.0.1 -p UDP --dport 3306 -i eth0 -j ACCEPT
+iptables -A INPUT -s 127.0.0.1 -p TCP --dport 3306 -i eth0 -j ACCEPT
+iptables -A INPUT -p UDP --dport 3306 -i eth0 -j DROP
+iptables -A INPUT -p TCP --dport 3306 -i eth0 -j DROP
+
+# GOGS
+iptables -A INPUT -s 127.0.0.1 -p UDP --dport 3000 -i eth0 -j ACCEPT
+iptables -A INPUT -s 127.0.0.1 -p TCP --dport 3000 -i eth0 -j ACCEPT
+iptables -A INPUT -p UDP --dport 3000 -i eth0 -j DROP
+iptables -A INPUT -p TCP --dport 3000 -i eth0 -j DROP
+
