@@ -1,29 +1,32 @@
 #!/bin/bash
 
-# Excepciones
-EXCEPCION[0]='co'
-EXCEPCION[1]='ca'
-#EXCEPCION[2]='us'
+# IPSET
+IPSET=ipset
 
-# Creamos la lista de IPSET
-ipset -exist flush permitido
-ipset -N permitido hash:net -exist
+# LIST
+LIST=allowed
 
-# Eliminamos las zonas descargadas anteriormente
-echo "Eliminando zonas descargadas anteriormente..."
-rm -f /tmp/all-zones.tar.gz
-rm -f /tmp/all-zones.tar.gz.*
+# If you want to add a new Exception, you need to add another element
+# to the array as follow: (Uncomment the Third Element)
+
+# Exceptions
+EXCEPTION[0]='co'
+EXCEPTION[1]='ca'
+#EXCEPTION[2]='us'
+
+# Let's create the list
+$IPSET -exist flush $LIST
+$IPSET -N $LIST hash:net -exist
+
+# We delete the old downloaded zones
 rm -f /tmp/*.zone
 
-# Descargamos la zona
-echo "Descargando Zonas..."
-for i in "${EXCEPCION[@]}";
+# We download the new zones
+for ZONE in "${EXCEPTION[@]}";
 do
-	echo "Descargando zona $i"
-        wget -P /tmp/ http://www.ipdeny.com/ipblocks/data/countries/$i.zone
+		echo "Downloading Zone $ZONE..."
+    wget -P /tmp/ http://www.ipdeny.com/ipblocks/data/countries/$ZONE.zone
 done
 
-# Agregamos las zonas de los paises
-echo "Agregando Zonas..."
-echo "Esto puede tardar unos minutos..."
-find /tmp/ -type f -name "*.zone" | awk {'print "for i in $(cat " $1 "); do ipset -A permitido $i; done"'} | bash
+# We add the countries into the list
+find /tmp/ -type f -name "*.zone" | awk {'print "for ZONE in $(cat " $1 "); do ipset -A $LIST $ZONE; done"'} | bash
