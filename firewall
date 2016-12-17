@@ -77,3 +77,16 @@ $IPTABLES -A $INPUT -p TCP -m set 	--match-set allowed src -j ACCEPT
 $IPTABLES -A $INPUT -p UDP -m set 	--match-set allowed src -j ACCEPT
 $IPTABLES -A $INPUT -p TCP -m set ! --match-set allowed src -j DROP
 $IPTABLES -A $INPUT -p UDP -m set ! --match-set allowed src -j DROP
+
+#
+# Services
+#
+
+# If you want to bind a service for a localhost-only use.
+# Just uncomment and copy-paste the rules as follow:
+
+# MySQL
+#$IPTABLES -A $INPUT -s 127.0.0.1 -p UDP --dport 3306 -i eth0 -j ACCEPT
+#$IPTABLES -A $INPUT -s 127.0.0.1 -p TCP --dport 3306 -i eth0 -j ACCEPT
+#$IPTABLES -A $INPUT -p UDP --dport 3306 -i eth0 -j DROP
+#$IPTABLES -A $INPUT -p TCP --dport 3306 -i eth0 -j DROP
