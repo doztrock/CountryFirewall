@@ -3,6 +3,9 @@
 # IPTables
 IPTABLES=/sbin/iptables
 
+# IPSet
+IPSET=ipset
+
 # Chain Rule
 INPUT=input
 OUTPUT=output
@@ -49,7 +52,7 @@ $IPTABLES -A $INPUT -i lo -j ACCEPT
 
 # List
 if [ -f $ALLOW_LIST ]; then
-	for ADDRESS in `cat $ALLOW_LIST`; do iptables -A INPUT -s $ADDRESS -j ACCEPT; done
+	for ADDRESS in `cat $ALLOW_LIST`; do $IPTABLES -A $INPUT -s $ADDRESS -j ACCEPT; done
 fi
 
 
@@ -62,5 +65,15 @@ lastb | awk {'print $3'} | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b" | sort | u
 
 # List
 if [ -f $BLOCK_LIST ]; then
-	for ADDRESS in `cat $BLOCK_LIST`; do iptables -A INPUT -s $ADDRESS -j ACCEPT; done
+	for ADDRESS in `cat $BLOCK_LIST`; do $IPTABLES -A $INPUT -s $ADDRESS -j ACCEPT; done
 fi
+
+#
+# Country Firewall
+#
+
+$IPSET -N allowed hash:net -exist
+$IPTABLES -A $INPUT -p TCP -m set 	--match-set allowed src -j ACCEPT
+$IPTABLES -A $INPUT -p UDP -m set 	--match-set allowed src -j ACCEPT
+$IPTABLES -A $INPUT -p TCP -m set ! --match-set allowed src -j DROP
+$IPTABLES -A $INPUT -p UDP -m set ! --match-set allowed src -j DROP
